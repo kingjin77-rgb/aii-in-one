@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+* { margin: 0; padding: 0; }
+body { width: 1080px; height: 200px; overflow: hidden; }
+.banner {
+  width: 1080px;
+  height: 200px;
+  background: linear-gradient(135deg, #0369a1 0%, #047857 50%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.bg-circle1 {
+  position: absolute;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  top: -100px; left: -50px;
+}
+.bg-circle2 {
+  position: absolute;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  bottom: -80px; right: 80px;
+}
+.bg-circle3 {
+  position: absolute;
+  width: 150px; height: 150px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  top: -40px; right: 200px;
+}
+.content {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  color: #d1fae5;
+  font-size: 12px;
+  font-family: 'Malgun Gothic', sans-serif;
+  padding: 3px 14px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.title {
+  font-family: 'Malgun Gothic', sans-serif;
+  font-size: 52px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 6px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.sub {
+  font-family: 'Malgun Gothic', sans-serif;
+  font-size: 15px;
+  color: #bae6fd;
+  letter-spacing: 2px;
+  margin-top: 8px;
+}
+.divider {
+  width: 60px;
+  height: 2px;
+  background: #fbbf24;
+  margin: 8px auto;
+  border-radius: 2px;
+}
+</style>
+</head>
+<body>
+<div class="banner">
+  <div class="bg-circle1"></div>
+  <div class="bg-circle2"></div>
+  <div class="bg-circle3"></div>
+  <div class="content">
+    <div class="badge">ajd.co.kr</div>
+    <div class="title">아 정 청</div>
+    <div class="divider"></div>
+    <div class="sub">평택 고덕국제신도시 &middot; 오산 청약 연구소</div>
+  </div>
+</div>
+</body>
+</html>
