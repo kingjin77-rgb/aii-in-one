@@ -3,7 +3,7 @@ import os
 
 # 부동산원 R-ONE Open API
 REB_API_BASE_URL = "https://www.reb.or.kr/r-one/openapi"
-REB_API_KEY = os.environ.get("REB_API_KEY", "")
+REB_API_KEY = os.environ.get("REB_API_KEY", "7e041d8f095346d58533ff1b12858ef1")
 
 # 공공데이터포털 API (data.go.kr)
 DATA_GO_KR_BASE_URL = "http://apis.data.go.kr/1613000"
