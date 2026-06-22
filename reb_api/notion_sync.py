@@ -3,8 +3,26 @@ import json
 from datetime import datetime
 
 
+def _extract_rows(data: dict) -> list:
+    """R-ONE API 응답에서 실제 데이터 행을 추출합니다.
+
+    응답 구조: {"SttsApiTblData": [{"head": [...]}, {"row": [...]}]}
+    """
+    if not isinstance(data, dict):
+        return []
+
+    tbl = data.get("SttsApiTblData", [])
+    if not isinstance(tbl, list):
+        return []
+
+    for item in tbl:
+        if isinstance(item, dict) and "row" in item:
+            return item["row"]
+
+    return []
+
+
 def format_stat_for_notion(stat_name: str, stat_data: dict) -> dict:
-    """통계 데이터를 노션 페이지 형식으로 변환합니다."""
     if stat_data["status"] == "error":
         return {
             "properties": {
@@ -18,8 +36,7 @@ def format_stat_for_notion(stat_name: str, stat_data: dict) -> dict:
         }
 
     data = stat_data.get("data", {})
-    rows = data.get("SttsApiTblData", []) if isinstance(data, dict) else []
-
+    rows = _extract_rows(data)
     table_md = build_markdown_table(rows)
 
     return {
@@ -35,7 +52,6 @@ def format_stat_for_notion(stat_name: str, stat_data: dict) -> dict:
 
 
 def build_markdown_table(rows: list) -> str:
-    """데이터 행을 마크다운 테이블로 변환합니다."""
     if not rows:
         return "*데이터 없음*"
 
@@ -47,14 +63,13 @@ def build_markdown_table(rows: list) -> str:
     lines.append("| " + " | ".join(headers) + " |")
     lines.append("| " + " | ".join(["---"] * len(headers)) + " |")
     for row in rows:
-        values = [str(row.get(h, "")) for h in headers]
+        values = [str(row.get(h, "")).replace("|", "/") for h in headers]
         lines.append("| " + " | ".join(values) + " |")
 
     return "\n".join(lines)
 
 
 def build_summary_content(results: dict, period: str) -> str:
-    """전체 수집 결과 요약 콘텐츠를 생성합니다."""
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     success_count = sum(1 for r in results.values() if r["status"] == "success")
     error_count = sum(1 for r in results.values() if r["status"] == "error")
@@ -80,7 +95,7 @@ def build_summary_content(results: dict, period: str) -> str:
 
         if data["status"] == "success":
             raw_data = data.get("data", {})
-            rows = raw_data.get("SttsApiTblData", []) if isinstance(raw_data, dict) else []
+            rows = _extract_rows(raw_data)
             lines.append(f"수집 건수: {len(rows)}건")
             if rows:
                 table = build_markdown_table(rows[:10])
