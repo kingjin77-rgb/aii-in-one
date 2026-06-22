@@ -3,6 +3,8 @@
 
 사용법:
     python -m reb_api.main --api-key YOUR_KEY --period 202406
+    python -m reb_api.main --api-key YOUR_KEY --diagnose
+    python -m reb_api.main --api-key YOUR_KEY --list-tables
 
 환경변수:
     REB_API_KEY: 부동산원 API 키 (r-one 또는 data.go.kr)
@@ -13,8 +15,13 @@ import sys
 from datetime import datetime
 
 from .config import STAT_TABLES
-from .fetcher import fetch_all_stats, fetch_stat_table_list
-from .notion_sync import build_summary_content, format_stat_for_notion
+from .fetcher import (
+    fetch_all_stats,
+    fetch_stat_table_list,
+    fetch_stat_data_rone,
+    diagnose_api,
+)
+from .notion_sync import build_summary_content
 
 
 def main():
@@ -22,10 +29,15 @@ def main():
     parser.add_argument("--api-key", help="부동산원 API 키", required=True)
     parser.add_argument("--period", help="조회기간 (예: 202406)", default=datetime.now().strftime("%Y%m"))
     parser.add_argument("--list-tables", action="store_true", help="사용 가능한 통계표 목록 조회")
+    parser.add_argument("--diagnose", action="store_true", help="API 연결 상태 진단")
     parser.add_argument("--output", help="결과 JSON 파일 저장 경로")
     parser.add_argument("--stat", help="특정 통계만 수집 (통계명)", choices=list(STAT_TABLES.keys()))
 
     args = parser.parse_args()
+
+    if args.diagnose:
+        diagnose_api(api_key=args.api_key)
+        return
 
     if args.list_tables:
         print("[조회] 통계표 목록을 가져오는 중...")
@@ -42,11 +54,10 @@ def main():
     print("=" * 60)
 
     if args.stat:
-        from .fetcher import fetch_stat_data
         info = STAT_TABLES[args.stat]
         print(f"[수집] {args.stat}...")
         try:
-            data = fetch_stat_data(
+            data = fetch_stat_data_rone(
                 stat_table_id=info["id"],
                 cycle_code=info["cycle"],
                 period=args.period,
